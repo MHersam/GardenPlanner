@@ -1,0 +1,99 @@
+<html class="ui-icons-enabled">
+<script>
+    var openHabianPI = "localhost"
+    function getParam(param)
+    {
+        var qs = (function(a) {
+            if (a == "") return {};
+            var b = {};
+            for (var i = 0; i < a.length; ++i) {
+                var p=a[i].split('=', 2);
+                if (p.length == 1)
+                    b[p[0]] = "";
+                else
+                    b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+            }
+            return b;
+        })(window.location.search.substr(1).split('&'));       
+        return qs[param]
+    }
+    function httpGet(theUrl)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+    		if (this.readyState == 4 && this.status == 200) {
+		    	document.getElementById('textInput').value = xmlHttp.responseText;
+		    }
+		};
+        xmlHttp.open("GET", theUrl, true);
+        xmlHttp.setRequestHeader("Accept", "text/plain");
+        xmlHttp.send();
+        return 
+    }
+    function httpPut(theUrl, theValue)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("PUT", theUrl, true);
+        xmlHttp.setRequestHeader("Content-type", "text/plain");
+        xmlHttp.setRequestHeader("Accept", "application/json");
+        xmlHttp.send(theValue)
+    }
+	function sendValue()
+	{
+        url = "http://" + openHabianPI + ":8080/rest/items/" + getParam('item') + "/state";
+        httpPut(url, document.getElementById('textInput').value)
+    }
+	function getValue()
+	{
+        url = "http://" + openHabianPI + ":8080/rest/items/" + getParam('item') + "/state";
+        httpGet(url)
+    }
+</script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script type="text/javascript">
+		$(parent.document).find('.mdl-form__row.mdl-form__row--height-auto.mdl-cell.mdl-cell--12-col').prev().css("display", "none");
+</script>
+<head>
+
+	<link rel="stylesheet" type="text/css" href="../basicui/mdl/material.min.css" />
+	<link rel="stylesheet" type="text/css" href="../basicui/material-icons.css" />
+	<link rel="stylesheet" type="text/css" href="../basicui/roboto.css" />
+	<link rel="stylesheet" type="text/css" href="../basicui/smarthome.css" />
+	<script src="../basicui/mdl/material.min.js"></script>
+	
+	<style>
+		form {
+			margin-bottom: 0;
+		}
+		.mdl-form__row {
+			border-bottom-style: none;
+			height: auto;
+			padding-top: 0;
+			padding-right: 0;
+			padding-bottom: 0;
+			padding-left: 0;
+		}
+	</style>
+</head>
+<body class="mdl-color-text--grey-700" data-icon-type="svg">
+	<form action="JavaScript:sendValue()">
+		<div class="mdl-form__row mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet">
+			<span class="mdl-form__icon">
+				<img data-icon="text" src="../icon/text?format=svg" />
+			</span>
+			<div class="mdl-form__label" id=label>
+			</div>
+			<div>
+				<input type="text" name="textInput" id="textInput">
+			</div>
+			<div>
+				<input type="submit" value="Submit">
+			</div>
+		</div>
+		<script>
+			document.getElementById('label').innerHTML = getParam('label');
+			document.getElementById('textInput').value = getValue()
+		</script>
+	</form>
+</body>
+</html>

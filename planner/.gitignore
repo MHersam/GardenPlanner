@@ -1,0 +1,8 @@
+.metadata/
+.recommenders/
+GardenPlanner/bin/
+GardenPlanner/.settings/
+GardenPlanner/res_archive/
+GardenPlanner/res/last_weather_forecast.json
+GardenPlanner/res/latest_plan.csv
+GardenPlanner/res/data.tmp

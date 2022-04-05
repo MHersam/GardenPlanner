@@ -1,0 +1,43 @@
+
+
+
+Licht: -----------------------
+	lichtmenge = lichtintensität * beleuchtungsdauer
+
+goal:
+	lichtmenge über Tag = 100 Lumen * 8 Stunden = 800 Lumenstunden
+
+	immer < 500 Lumen
+	
+	beleuchtung nur zwischen 6:00 (oder ertst ab 18:00) - 22:00
+
+
+lichtAn eine Minute:
+	100 lumen
+	lichtmenge += 1,6 Lumenstunden
+	
+Sonnenlicht:
+	X Lumen
+
+jalousieZu:
+	Blockiert Sonnenlicht bzw Sonnenlicht = 0
+	
+
+Wasser: ---------------
+BodenFeuchte
+ZeitpunktRegen
+Luftfeuchtigkeit
+Regensensor (Ja/Nein bzw 1/0)
+ProgFeuchteZPRegen = BodenFeuchte - (1-Regensensor)*(((Luftfeuchtigkeit + 60) / 160) * (Temperatur +100 / 150)) *ZeitpunktRegen 
+//Wenn es nicht regnet sinkt die Luftfeuchte ansonsten bleibt konstant bei Bodenfeuchte
+goal: 	nicht unter minFeuchte (50%), nicht über  maxFeuchte(90%) Zielfeuchte: 80%
+		ProgFeuchteZPRegen > minFeuchte
+		AktivesBäwessern nur wenn  Bodenfeuchte < Zielfeuchte
+		
+aktivBewässern eine Minute:
+	BodenFeuchte += 2 (in Prozent)
+		
+jalousieZu:
+	Blockiert Regen BodenFeuchte -> BodenFeuchte -1
+
+

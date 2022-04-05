@@ -1,0 +1,51 @@
+sitemap gp label="Main Menu"
+{
+	
+	//Group for GardenPlaner 
+	Frame label="GardenPlaner" {
+		Group item=gP label="Garden" icon="garden"
+	}
+	
+	//Group for Testground
+	Frame label="Testground" {
+		Group item=tG label="Testground" icon="cellar"
+	}
+	
+	Frame label="Sonstiges" {
+		Text item=myCharts label= "Charts" {
+			Switch item=PeriodTemp label="Temperatur" icon="time" mappings=[0="Stunde", 1="Tag", 2="Woche", 3="Jahr", -1="close"]
+			Chart item=tempChart period=h refresh=7200 visibility=[PeriodTemp==0, PeriodHum=="Uninitialized"]
+			Chart item=tempChart period=D refresh=14400 visibility=[PeriodTemp==1]
+			Chart item=tempChart period=W refresh=14400 visibility=[PeriodTemp==2]
+			Chart item=tempChart period=Y refresh=14400 visibility=[PeriodTemp==3]
+			Switch item=PeriodHum label="Feuchtigkeit" icon="time" mappings=[0="Stunde", 1="Tag", 2="Woche", 3="Jahr", -1="close"]
+			Chart item=humChart period=h refresh=7200 visibility=[PeriodHum==0, PeriodHum=="Uninitialized"]
+			Chart item=humChart period=D refresh=14400 visibility=[PeriodHum==1]
+			Chart item=humChart period=W refresh=14400 visibility=[PeriodHum==2]
+			Chart item=humChart period=Y refresh=14400 visibility=[PeriodHum==3]
+			Switch item=PeriodLux label="Licht: Lux" icon="time" mappings=[0="Stunde", 1="Tag", 2="Woche", 3="Jahr", -1="close"]
+			Chart item=luxChart period=h refresh=7200 visibility=[PeriodLux==0, PeriodHum=="Uninitialized"]
+			Chart item=luxChart period=D refresh=14400 visibility=[PeriodLux==1]
+			Chart item=luxChart period=W refresh=14400 visibility=[PeriodLux==2]
+			Chart item=luxChart period=Y refresh=14400 visibility=[PeriodLux==3]
+			Switch item=PeriodsHum label="Bodenfeuchte" icon="time" mappings=[0="Stunde", 1="Tag", 2="Woche", 3="Jahr", -1="close"]
+			Chart item=shumChart period=h refresh=7200 visibility=[PeriodsHum==0, PeriodHum=="Uninitialized"]
+			Chart item=shumChart period=D refresh=14400 visibility=[PeriodsHum==1]
+			Chart item=shumChart period=W refresh=14400 visibility=[PeriodsHum==2]
+			Chart item=shumChart period=Y refresh=14400 visibility=[PeriodsHum==3]
+		}
+	}
+	
+	Frame label="Eingaben:" {
+	/* to change a value with a textinput*/
+	/*                                                                enter here itemname */
+		Webview url="http://192.168.8.150:8080/static/textinput.html?item=gp_par_water_ml&label=Bewässerungsmenge" height=1
+	}
+	
+	Frame label="Raspberry Settings:" {
+		/*Setup raspberry*/
+		Webview url="http://localhost:8080/static/textinput.html?item=rasp_waterflow&label=Rasp Waterflow ml/min" height=1
+		Webview url="http://localhost:8080/static/textinput.html?item=rasp_shutter_totalSteps&label=Rasp Shutter total_steps" height=1
+		Switch item=rasp_calibrate_soilmoisture_max label="Set current soilhumidity to 100%"
+	}
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+	<!-- Domain model configuration -->
+	<solutionClass>org.optaplanner.gardenplanner.domain.GardenScheduleSolution</solutionClass>
+	<entityClass>org.optaplanner.gardenplanner.domain.WaterIntensity</entityClass>
+	<entityClass>org.optaplanner.gardenplanner.domain.Shutter</entityClass>
+	
+	<!-- local search configuration -->
+	<localSearch>
+		<localSearchType>HILL_CLIMBING</localSearchType>
+	    <unionMoveSelector>
+	    	<changeMoveSelector>
+	            <entitySelector>
+	                <entityClass>org.optaplanner.gardenplanner.domain.Shutter</entityClass>
+	            </entitySelector>
+	        </changeMoveSelector>
+	        <changeMoveSelector>
+	            <entitySelector>
+	                <entityClass>org.optaplanner.gardenplanner.domain.WaterIntensity</entityClass>
+	            </entitySelector>
+	        </changeMoveSelector>
+	    </unionMoveSelector>
+    </localSearch>
+
+	<!-- Multi threading -->
+	<moveThreadCount>AUTO</moveThreadCount>
+
+	<!-- Score configuration -->
+	<scoreDirectorFactory>
+		<easyScoreCalculatorClass>org.optaplanner.gardenplanner.solver.ScoreCalculator</easyScoreCalculatorClass>
+		<initializingScoreTrend>ANY</initializingScoreTrend>
+	</scoreDirectorFactory>
+
+	<!-- Optimization algorithms configuration -->
+	<termination>
+	<!--TODO: change value: Debugging value, increase for production -->
+		<minutesSpentLimit>1</minutesSpentLimit>
+	</termination>
+</solver>

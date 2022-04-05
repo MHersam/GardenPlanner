@@ -1,0 +1,64 @@
+/* Group for the GardenPlaner */
+Group gP        "Garden"        <gp>        ["Garden"]
+/* Group to Test and tryouts during development*/
+Group tG        "Testground"    <tg>        ["Testground"]
+
+/* Groups for the Charts */
+Group myCharts "Charts"
+Group:Switch tempChart "tempChartGroup" 
+Group:Switch humChart "humChartGroup" 
+Group:Switch luxChart "luxChartGroup" 
+Group:Switch shumChart "shumChartGroup"
+
+
+
+
+/* tcp port for the communication with the Raspberry. E.g. used for commands or getting sensor info */
+String 	MyTCP_Rasp			"TCP_Rasp" 		{tcp=">[*:127.0.0.1:5005:default]"} 
+/*String 	MyTCP_Rasp			"TCP_Rasp" 		{tcp=">[*:192.168.8.150:5005:default]"} */
+
+/* Sensor data */
+Number 	gp_Temperature 		"Temperature [%.1f °C]"		(tempChart, gP)
+Number 	gp_air_hum 			"Luft Feuchte [%.1f %%]"	(humChart, gP)
+Number 	gp_soil_hum 		"Boden Feuchte [%.1f %%]"	(shumChart, gP)
+Number 	gp_light_h 			"Sonnenstunden [%.1f h]"	(gP)
+Number	gp_light_aktLux		"Momentane Lux [%.1f lx]"	(luxChart, tG, gP)
+Number	gp_light_wh_m2		"Lichteinfall ges. [%.5f wh/m2]"	(tG, gP)
+
+/* Sensor status */
+String air_hum_temp_sensor	"Feucht./Temp. Sensor: [%s]"	(tG)
+String soilhum_sensor 		"Bodenf. Sensor: [%s]" 			(tG)
+String light_sensor			"Licht Sensor: [%s]" 			(tG)
+Number water_tank_state		"Tank Leer: [%d]"				(tG)	/* 0 = tank is not empty; 1 = empty */
+
+/* Raspberry settings */
+Number rasp_waterflow
+Number rasp_shutter_totalSteps
+Switch rasp_calibrate_soilmoisture_max
+
+/* Device data and Switches */
+Number 	gp_par_water_ml		"Bew. Menge [%.1f ml]"		(gP)
+Switch	gp_dev_water		"Bewässerung"				(gP)
+Switch	gp_dev_light		"Kunstlicht"				(gP)
+Switch	gp_dev_heating		"Heizplatten"				(gP)
+Switch	gp_dev_shutter		"Sonnenblende"				(gP)
+
+
+
+
+/* Test-Items for developing */
+Switch	tg_tcp_SW_com		"TCP_Command_Switch"	(tG)
+Switch	tg_tcp_SW_rec 		"TCP_Receive"			(tG)
+Number 	tg_Temperature 		"Temperatures [%.1f °C]"	(tG)
+Switch	tg_closeServer		"Beende_RaspServer"		(tG)
+
+
+/*for charts */
+Number PeriodTemp
+Number PeriodHum
+Number PeriodsHum
+Number PeriodLux
+
+
+/* String 	debug_1 	"DB1 [%s]"				(gC)	*/
+/* String 	debug_2 	"DB2 [%s]"				(gC)	*/

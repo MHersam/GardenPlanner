@@ -1,0 +1,52 @@
+{
+	"address"		: "http://localhost:8080/rest/",
+	"requestJIT"	: false,
+	
+	"items"			: [
+		{
+			"openHABName"	: "gp_Temperature",
+			"alias"			: "temperature",
+			"type"			: "Number",
+		},
+		{
+			"openHABName"	: "gp_air_hum",
+			"alias"			: "air_humidity",
+			"type"			: "Number",
+		},
+		{
+			"openHABName"	: "gp_light_h",
+			"alias"			: "sun_hours",
+			"type"			: "Number",
+		},
+		{
+			"openHABName"	: "gp_soil_hum",
+			"alias"			: "soil_humidity",
+			"type"			: "Number",
+		},
+		{
+			"openHABName"	: "gp_par_water_ml",
+			"alias"			: "water_amount",
+			"type"			: "Number",
+		},
+		{
+			"openHABName"	: "gp_dev_water",
+			"alias"			: "water_pump",
+			"type"			: "Switch",
+		},
+		{
+			"openHABName"	: "gp_dev_light",
+			"alias"			: "light",
+			"type"			: "Switch",
+		},
+		{
+			"openHABName"	: "gp_dev_heating",
+			"alias"			: "heating",
+			"type"			: "Switch",
+		},
+		{
+			"openHABName"	: "gp_dev_shutter",
+			"alias"			: "shutter",
+			"type"			: "Switch",
+		},
+	]
+}

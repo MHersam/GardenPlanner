@@ -1,0 +1,265 @@
+import java.util.Random
+import org.openhab.core.library.types.*
+
+/* \n is needed in the TCP-Connection as a split character */
+
+rule "Initialize Raspberry Settings"
+when
+	System started
+then
+	/*rasp_waterflow.sendCommand(120)*/
+	/*rasp_shutter_totalSteps.sendCommand(2000)*/
+end
+
+rule "Start Watering by Switch"
+when
+	Item gp_dev_water received command
+then
+
+	val command = receivedCommand
+	
+	if (gp_par_water_ml.state == NULL)
+		gp_par_water_ml.postUpdate(65)	/* TODO: set faked watering amount till it is set from GP-CSP */
+
+	if (command == ON){
+		MyTCP_Rasp.sendCommand('{ "startWatering":"'+gp_par_water_ml.state+'" }\n')
+	}
+	else if (command == OFF ){
+		MyTCP_Rasp.sendCommand('{ "startWatering":"STOP" }\n')
+	}
+	else {
+		MyTCP_Rasp.sendCommand("Error: Unexcpected command"+command+"\n")
+	}
+	
+end
+
+rule "Calibrate current soil moisture as max"
+when
+	Item rasp_calibrate_soilmoisture_max received command ON
+then
+	MyTCP_Rasp.sendCommand('{ "set_soilmoisture_max":"OKEY" }\n')
+    createTimer(now.plusMillis(250))[
+               rasp_calibrate_soilmoisture_max.sendCommand(OFF)]
+end
+
+rule "Start Light by Switch"
+when
+	Item gp_dev_light received command
+then
+
+	val command = receivedCommand
+	
+
+	if (command == ON){
+		MyTCP_Rasp.sendCommand('{ "startLight":"START" }\n')
+	}
+	else if (command == OFF ){
+		MyTCP_Rasp.sendCommand('{ "startLight":"STOP" }\n')
+	}
+	else {
+		MyTCP_Rasp.sendCommand("Error: Unexcpected command"+command+"\n")
+	}
+	
+end
+
+rule "Open/Close Shutters by Switch"
+when
+	Item gp_dev_shutter received command
+then
+
+	val command = receivedCommand
+	
+
+	if (command == ON){
+		MyTCP_Rasp.sendCommand('{ "changeSutter":"CLOSE" }\n')
+	}
+	else if (command == OFF ){
+		MyTCP_Rasp.sendCommand('{ "changeSutter":"OPEN" }\n')
+	}
+	else {
+		MyTCP_Rasp.sendCommand("Error: Unexcpected command"+command+"\n")
+	}
+	
+end
+
+rule "Start Heating by Switch"
+when
+	Item gp_dev_heating received command
+then
+
+	val command = receivedCommand
+	
+
+	if (command == ON){
+		MyTCP_Rasp.sendCommand('{ "startHeating":"START" }\n')
+	}
+	else if (command == OFF ){
+		MyTCP_Rasp.sendCommand('{ "startHeating":"STOP" }\n')
+	}
+	else {
+		MyTCP_Rasp.sendCommand("Error: Unexcpected command"+command+"\n")
+	}
+	
+end
+
+/* Testground Item-Rules */
+
+rule "tG tg_tcp_SW_com"
+when
+	Item tg_tcp_SW_com received command
+then
+
+	val command = receivedCommand
+
+	if (command == ON){
+		MyTCP_Rasp.sendCommand("TCP_SWITCH 1\n")
+	}
+	else if (command == OFF){
+		MyTCP_Rasp.sendCommand("TCP_SWITCH 0\n")
+	}
+	else {
+		MyTCP_Rasp.sendCommand("Error: Unexcpected command"+command+"\n")
+	}
+	
+end
+
+
+rule "Close Rasp Server"
+when
+	Item tg_closeServer received command
+then
+
+	val command = receivedCommand
+
+	if (command == ON){
+		MyTCP_Rasp.sendCommand("Server_Exit\n")
+	}
+	else if (command == OFF){
+		
+	}
+	else {
+		MyTCP_Rasp.sendCommand("Error: Unexcpected command"+command+"\n")
+	}
+	
+end
+
+rule "Set Raspberry Waterflow"
+when
+	Item rasp_waterflow changed
+then
+	var JSONcommand = '{"set_waterflow":"'+rasp_waterflow.state.toString+'"}\n'
+	MyTCP_Rasp.sendCommand(JSONcommand)
+end
+
+rule "Set Raspberry Shutter total_steps"
+when
+	Item rasp_shutter_totalSteps changed
+then
+	var JSONcommand = '{"set_total_steps":"'+rasp_shutter_totalSteps.state.toString+'"}\n'
+	MyTCP_Rasp.sendCommand(JSONcommand)
+end
+
+
+rule "Handle MyTCP_Rasp"
+when
+    Item MyTCP_Rasp changed
+then
+
+	//Debug-Info on Website demo
+	//debug_1.postUpdate("A String")
+	//Debug-Info on openhab.log
+	//logDebug("gp.rules", "debug temp"+tg_Temperature.state.toString)
+	
+	//JSON Befehle behandeln
+	val tcp_state_jason = MyTCP_Rasp.state.toString
+	
+	//--------------------- GardenPlaner Block -------------------------
+	var command = transform("JSONPATH", "$.temp_1", tcp_state_jason)	
+	if (command !== tcp_state_jason){
+		gp_Temperature.sendCommand(Float::parseFloat(command))
+	} 
+	
+	command = transform("JSONPATH", "$.air_Hum", tcp_state_jason)	
+	if (command !== tcp_state_jason){
+		gp_air_hum.sendCommand(Float::parseFloat(command))
+	}
+	
+	command = transform("JSONPATH", "$.soil_Hum", tcp_state_jason)	
+	if (command !== tcp_state_jason){
+		gp_soil_hum.sendCommand(Float::parseFloat(command))
+	}
+	command = transform("JSONPATH", "$.is_water_empty", tcp_state_jason)	
+	if (command !== tcp_state_jason){
+		water_tank_state.sendCommand(Integer::parseInt(command))
+	}
+	
+	command = transform("JSONPATH", "$.light_h", tcp_state_jason)
+	if (command !== tcp_state_jason){
+		if(command == "None"){
+			gp_light_h.sendCommand(-100f)
+		} else {
+			gp_light_h.sendCommand(Float::parseFloat(command))
+		}
+	}
+	command = transform("JSONPATH", "$.light_akt_lux", tcp_state_jason)		/*Lux*/
+	if (command !== tcp_state_jason){
+		if(command == "None"){
+			gp_light_aktLux.sendCommand(-100f)
+		} else {
+			gp_light_aktLux.sendCommand(Float::parseFloat(command))
+		}
+	}
+	command = transform("JSONPATH", "$.light_wh_m2", tcp_state_jason)
+	if (command !== tcp_state_jason){
+		if(command == "None"){
+			gp_light_wh_m2.sendCommand(-100f)
+		} else {
+			gp_light_wh_m2.sendCommand(Float::parseFloat(command))
+		}
+	}
+	command = transform("JSONPATH", "$.dev_water", tcp_state_jason)	
+	if (command !== tcp_state_jason){
+		if (command == "ON"){
+		
+		} else if (command == "OFF" && gp_dev_water.state != OFF){
+			gp_dev_water.sendCommand(OFF)
+		}
+	}
+	
+	
+	//--------------------- Sensor Status -----------------------------
+	command = transform("JSONPATH", "$.air_hum_temp_sensor", tcp_state_jason)		
+	if (command !== tcp_state_jason){
+			air_hum_temp_sensor.sendCommand(command)
+	}
+	command = transform("JSONPATH", "$.soilhum_sensor", tcp_state_jason)		
+	if (command !== tcp_state_jason){
+			soilhum_sensor.sendCommand(command)
+	}
+	command = transform("JSONPATH", "$.light_sensor", tcp_state_jason)		
+	if (command !== tcp_state_jason){
+			light_sensor.sendCommand(command)
+	}
+	
+	
+	
+	//--------------------- Testground Block --------------------------
+	
+	//Change the tg_tcp_SW_rec Switch at command
+	val tg_tcp_SW_rec_command = transform("JSONPATH", "$.tg_tcp_SW_rec", tcp_state_jason)	
+	if (tg_tcp_SW_rec_command.toString == "ON"){
+		tg_tcp_SW_rec.sendCommand(ON)
+	} 
+	else if (tg_tcp_SW_rec_command.toString == "OFF"){
+		tg_tcp_SW_rec.sendCommand(OFF)
+	}
+	
+	//Change temperature on command
+	val temperature_command = transform("JSONPATH", "$.temp_1", tcp_state_jason)
+	//If Info-Block is not in the JSON the untransformed text is given back, so test it in this way (not null check!)
+	if(temperature_command !== tcp_state_jason){
+		tg_Temperature.sendCommand(Float::parseFloat(temperature_command))
+	} 
+		
+end
+

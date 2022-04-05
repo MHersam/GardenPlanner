@@ -1,0 +1,6 @@
+[submodule "planner"]
+	path = planner
+	url = https://github.com/st142148/GardenPlanner
+[submodule "raspberry"]
+	path = raspberry
+	url = https://github.com/st142148/GP_Raspberry

@@ -1,0 +1,18 @@
+{
+	* "projectName"		: String,
+	* "address"			: String,	//default: "http://localhost:8080/rest/"
+//	* "requestAll"		: bool		//request all items at once. Maybe
+	* "requestJIT"		: bool,		//delay item request for when needed, default: false
+	* "persistancyService : String	//service name for item history
+	
+	"items"			: [
+		{
+			"openHABName"		: String,		//name as defined in openHAB config
+			* "alias"			: String,		//alias to be used in the program
+			* "type"			: String,		//item type
+			* "whenUnreachable"	: String,		//"warning"/"error"
+			* "getHistory"		: Number,		//Second into the past to retrieve item states
+			* "whenHistoryUnreachable"	: String,		//"warning"/"error"
+		},
+	]
+}

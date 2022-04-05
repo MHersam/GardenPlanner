@@ -1,0 +1,12 @@
+Kabel Lichtsensor (Weiser Teil):
+	Grd 	= Schwarz
+	Vcc 	= Braun
+	Grü/Gel	= SCL
+	Grau	= SDA
+
+	(Stecker PI (s/gr/r/bl))
+	Grd	= Schwarz
+	Vcc	= Blau
+	grün	= SCL
+	rot	= SDA
+

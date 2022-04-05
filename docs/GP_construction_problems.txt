@@ -1,0 +1,7 @@
+Green house construction problems
+
+Shutter
+While the shutter worked great after its construction, because the bearings are not directly protected against wind and rain some of them started to rust. Because of this we had to adjust the range of movement of the sliders and the setting of the stepper motor. Adding some kind of covers at the side of the bearings should mitigate this.
+
+Cold Weather
+Because of its open construction the water container and irrigation tube are not protected against the cold. while the water tank with the pump inside showed only surface level ice at around -5 degrees celcius, the tube froze completely shut. To prevent the freezing of the water tank, a heating pad can be placed underneath it. To prevent the tube from freezing it would need to be mounted in a way which automatically drains any excess water that does not reach the plants.
